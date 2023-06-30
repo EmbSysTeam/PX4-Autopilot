@@ -154,8 +154,8 @@ private:
 	perf_counter_t	_interval_perf;
 
 	void		update_current_rate();
-	int			set_pwm_rate(unsigned rate_map, unsigned default_rate, unsigned alt_rate);
-	int			pwm_ioctl(device::file_t *filp, int cmd, unsigned long arg);
+	int		set_pwm_rate(unsigned rate_map, unsigned default_rate, unsigned alt_rate);
+	int		pwm_ioctl(device::file_t *filp, int cmd, unsigned long arg);
 
 	bool		update_pwm_out_state(bool on);
 

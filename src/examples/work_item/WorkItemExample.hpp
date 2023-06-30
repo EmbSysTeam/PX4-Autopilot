@@ -52,7 +52,10 @@
 
 using namespace time_literals;
 
-class WorkItemExample : public ModuleBase<WorkItemExample>, public ModuleParams, public px4::ScheduledWorkItem
+class WorkItemExample
+	: public ModuleBase<WorkItemExample>
+	, public ModuleParams
+	, public px4::ScheduledWorkItem
 {
 public:
 	WorkItemExample();

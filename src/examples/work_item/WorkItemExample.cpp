@@ -90,7 +90,6 @@ void WorkItemExample::Run()
 
 			if (armed && !_armed) {
 				PX4_WARN("vehicle armed due to %d", vehicle_status.latest_arming_reason);
-
 			} else if (!armed && _armed) {
 				PX4_INFO("vehicle disarmed due to %d", vehicle_status.latest_disarming_reason);
 			}

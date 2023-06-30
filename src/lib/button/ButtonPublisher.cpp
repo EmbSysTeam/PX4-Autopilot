@@ -49,36 +49,37 @@ ButtonPublisher::ButtonPublisher()
 
 void ButtonPublisher::safetyButtonTriggerEvent()
 {
-
-
-	button_event_s safety_button{};
-	safety_button.triggered = true;
-	safety_button.timestamp = hrt_absolute_time();
-
+	button_event_s safety_button{
+		.timestamp = hrt_absolute_time(),
+		.triggered = true
+	};
 	_safety_button_pub.publish(safety_button);
 }
 
 void ButtonPublisher::pairingButtonTriggerEvent()
 {
-	vehicle_command_s vcmd{};
-	vcmd.command = vehicle_command_s::VEHICLE_CMD_START_RX_PAIR;
-	vcmd.param1 = 10.f; // GCS pairing request handled by a companion.
+	vehicle_command_s vcmd{
+		.param1 = 10.f, // GCS pairing request handled by a companion.
+		.command = vehicle_command_s::VEHICLE_CMD_START_RX_PAIR,
+	};
 	vcmd.timestamp = hrt_absolute_time();
 	_vehicle_command_pub.publish(vcmd);
 	PX4_DEBUG("Sending GCS pairing request");
 
-	led_control_s led_control{};
-	led_control.led_mask = 0xff;
-	led_control.mode = led_control_s::MODE_BLINK_FAST;
-	led_control.color = led_control_s::COLOR_GREEN;
-	led_control.num_blinks = 1;
-	led_control.priority = 0;
+	led_control_s led_control{
+		.led_mask = 0xff,
+		.color = led_control_s::COLOR_GREEN,
+		.mode = led_control_s::MODE_BLINK_FAST,
+		.num_blinks = 1,
+		.priority = 0
+	};
 	led_control.timestamp = hrt_absolute_time();
 	_led_control_pub.publish(led_control);
 
-	tune_control_s tune_control{};
-	tune_control.tune_id = tune_control_s::TUNE_ID_NOTIFY_POSITIVE;
-	tune_control.volume = tune_control_s::VOLUME_LEVEL_DEFAULT;
+	tune_control_s tune_control{
+		.tune_id = tune_control_s::TUNE_ID_NOTIFY_POSITIVE,
+		.volume = tune_control_s::VOLUME_LEVEL_DEFAULT
+	};
 	tune_control.timestamp = hrt_absolute_time();
 	_tune_control_pub.publish(tune_control);
 }

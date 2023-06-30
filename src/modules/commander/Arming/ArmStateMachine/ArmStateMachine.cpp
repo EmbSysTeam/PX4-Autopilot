@@ -60,12 +60,18 @@ events::px4::enums::arming_state_t ArmStateMachine::eventArmingState(uint8_t arm
 	return events::px4::enums::arming_state_t::init;
 }
 
-transition_result_t ArmStateMachine::arming_state_transition(vehicle_status_s &status,
-		const vehicle_control_mode_s &control_mode, const safety_s &safety,
-		const arming_state_t new_arming_state, actuator_armed_s &armed, const bool fRunPreArmChecks,
-		orb_advert_t *mavlink_log_pub, vehicle_status_flags_s &status_flags,
-		const PreFlightCheck::arm_requirements_t &arm_requirements,
-		const hrt_abstime &time_since_boot, arm_disarm_reason_t calling_reason)
+transition_result_t ArmStateMachine::arming_state_transition(
+	vehicle_status_s &status,
+	const vehicle_control_mode_s &control_mode,
+	const safety_s &safety,
+	const arming_state_t new_arming_state,
+	actuator_armed_s &armed,
+	const bool fRunPreArmChecks,
+	orb_advert_t *mavlink_log_pub,
+	vehicle_status_flags_s &status_flags,
+	const PreFlightCheck::arm_requirements_t &arm_requirements,
+	const hrt_abstime &time_since_boot,
+	arm_disarm_reason_t calling_reason)
 {
 	// Double check that our static arrays are still valid
 	static_assert(vehicle_status_s::ARMING_STATE_INIT == 0, "ARMING_STATE_INIT == 0");
@@ -76,6 +82,7 @@ transition_result_t ArmStateMachine::arming_state_transition(vehicle_status_s &s
 	arming_state_t current_arming_state = status.arming_state;
 	bool feedback_provided = false;
 
+	// HIL is Hardware In the Loop
 	const bool hil_enabled = (status.hil_state == vehicle_status_s::HIL_STATE_ON);
 
 	/* only check transition if the new state is actually different from the current one */
@@ -93,8 +100,15 @@ transition_result_t ArmStateMachine::arming_state_transition(vehicle_status_s &s
 		if (fRunPreArmChecks && (new_arming_state == vehicle_status_s::ARMING_STATE_ARMED)
 		    && !hil_enabled) {
 
-			preflight_check_ret = PreFlightCheck::preflightCheck(mavlink_log_pub, status, status_flags, control_mode,
-					      true, true, time_since_boot);
+			preflight_check_ret = PreFlightCheck::preflightCheck(
+				mavlink_log_pub,
+				status,
+				status_flags,
+				control_mode,
+				true,
+				true,
+				time_since_boot
+			);
 
 			if (preflight_check_ret) {
 				status_flags.system_sensors_initialized = true;
@@ -112,9 +126,15 @@ transition_result_t ArmStateMachine::arming_state_transition(vehicle_status_s &s
 
 			if ((_last_preflight_check == 0) || (hrt_elapsed_time(&_last_preflight_check) > 1000 * 1000)) {
 
-				status_flags.system_sensors_initialized = PreFlightCheck::preflightCheck(mavlink_log_pub, status,
-						status_flags, control_mode, false, status.arming_state != vehicle_status_s::ARMING_STATE_ARMED,
-						time_since_boot);
+				status_flags.system_sensors_initialized = PreFlightCheck::preflightCheck(
+					mavlink_log_pub,
+					status,
+					status_flags,
+					control_mode,
+					false,
+					status.arming_state != vehicle_status_s::ARMING_STATE_ARMED,
+					time_since_boot
+				);
 
 				_last_preflight_check = hrt_absolute_time();
 			}
